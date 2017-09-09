@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {packages: ['corechart']});
+        google.charts.setOnLoadCallback(func_http_get);
+        function get_change(current,midnight){
+            var change;
+            if(current - midnight >=0){
+               change = (current - midnight) * 100 / (midnight) +"%";
+            }else{
+                change = "-" + (midnight - current) * 100 / (midnight) +"%";
+            }
+            return change;
+        }
+        function get_image_clicked(token){
+           console.log(token +"clicked \n");
+        }
+        function create_table(source){
+            var newTable = document.createElement('table');
+            var tableHeadingRow = document.createElement('tr');
+            var tableHeader_0 = document.createElement('th');
+            var tableHeader_1 = document.createElement('th');
+            var tableHeader_2 = document.createElement('th');
+            var tableHeader_3 = document.createElement('th');
+            var tableHeader_4 = document.createElement('th');
+            var header_0 = document.createTextNode('');
+            var header_1 = document.createTextNode('Name');
+            var header_2 = document.createTextNode('address');
+            var header_3 = document.createTextNode('Change');
+            var header_4 = document.createTextNode('address graph(1d)');
+            tableHeader_0.appendChild(header_0);
+            tableHeader_1.appendChild(header_1);
+            tableHeader_2.appendChild(header_2);
+            tableHeader_3.appendChild(header_3);
+            tableHeader_4.appendChild(header_4);
+            tableHeadingRow.appendChild(tableHeader_0);
+            tableHeadingRow.appendChild(tableHeader_1);
+            tableHeadingRow.appendChild(tableHeader_2);
+            tableHeadingRow.appendChild(tableHeader_3);
+            tableHeadingRow.appendChild(tableHeader_4);
+            newTable.appendChild(tableHeadingRow);
+
+            for(i = 0; i < source.length; i++){
+                var tableRow = document.createElement('tr');
+                var tableData_0 = document.createElement('img');
+                var tableData_1 = document.createElement('td');
+                var tableData_2 = document.createElement('td');
+                var tableData_3 = document.createElement('td');
+                var tableData_4 = document.createElement('td');
+                tableData_0.src = "/pic/" + source[i].name +".png";
+                tableData_0.alt = source[i].name;
+                tableData_1.textContent = source[i].name;
+                tableData_2.textContent = source[i].address_num;
+                tableData_3.textContent = get_change(source[i].address_num, source[i].midnight_address);
+                tableData_4.id =  "img" +i;
+                tableData_4.alt =  source[i].name;
+                tableData_4.onclick =  function() {
+                    alert(this.alt);
+                }
+                tableRow.appendChild(tableData_0);
+                tableRow.appendChild(tableData_1);
+                tableRow.appendChild(tableData_2);
+                tableRow.appendChild(tableData_3);
+                tableRow.appendChild(tableData_4);
+                newTable.appendChild(tableRow);
+            }
+            document.body.appendChild(newTable);
+        }
+        function create_pic_trend(points, index)
+        {
+            var num = points.length;
+            var source_data = [];
+            for(var i=0; i < num; i++){
+                var time = new Date(points[i][0] * 1000);
+                var address_num = Number(points[i][1]);
+                //time = new Date(time.toDateString());
+                console.log(time);
+                var row = [time, address_num];
+                source_data.push(row);
+            }
+            console.log("dump source data\n");
+            console.log(source_data);
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'X');
+            data.addColumn('number', 'address');
+
+
+            data.addRows(source_data);
+            var options = {
+                width: 180,
+                height: 100,
+                legend: {position: 'none'}
+                /*
+                hAxis: {
+                    title: 'Time',
+                    format: 'dd/MM/yyyy HH:mm'
+                },
+                vAxis: {
+                    title: 'num of address'
+                }
+                */
+            };
+
+            var div_id = "img" + index;
+            var chart_div = document.getElementById(div_id);
+            var chart = new google.visualization.LineChart(chart_div);
+            var dateFormatter = new google.visualization.DateFormat({pattern: 'dd/MM/yyyy HH:mm'});
+            dateFormatter.format(data, 0);
+
+            google.visualization.events.addListener(chart, 'ready', function () {
+                chart_div.innerHTML = '<img src="' + chart.getImageURI() + '">';
+                console.log(chart_div.innerHTML);
+            });
+
+            chart.draw(data, options);
+
+        }
+        function draw(source){
+            var source = JSON.parse(source);
+            console.log(source);
+            var num = source.length;
+            console.log(num);
+            create_table(source);
+
+            for(i = 0; i < source.length; i++){
+                var points = source[i].points;
+                create_pic_trend(points, i);
+            }
+        }
+        function func_http_get(){
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            } else { // code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function() {
+                if (this.readyState==4 && this.status==200) {
+                    draw(this.responseText);
+                }
+            }
+            xmlhttp.open("GET","get_tables.php",true);
+            xmlhttp.send();
+        }
+    </script>
+</head>
+<body>
+<h2 id="header_1" align="center"></h2>
+<div id="chart_div"></div>
+
+</body>
+</html>
