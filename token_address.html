@@ -1,10 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+<meta charset="utf-8">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        var token_name;
+        google.charts.load('current', {packages: ['corechart']});
+        google.charts.setOnLoadCallback(func_http_get);
+        function draw(source){
+            var source_data = [];
+            debugger;
+            source = source.replace(/"/g, "");
+            source = JSON.parse(source);
+            var num = source.length;
+            var size = source[0].length;
+            for(var i=0; i < num; i++){
+                var time = new Date(source[i][0] * 1000);
+                //time = new Date(time.toDateString());
+                console.log(time);
+                var row = [time, source[i][1]];
+                source_data.push(row);
+            }
+            console.log("dump data");
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'X');
+            data.addColumn('number', 'address');
+
+
+            data.addRows(source_data);
+            var options = {
+                width: 1800,
+                height: 1000,
+                hAxis: {
+                    title: 'Time',
+                    format: 'dd/MM/yyyy'
+                },
+                vAxis: {
+                    title: 'num of address'
+                }
+            };
+            /*
+            var formatter_long = new google.visualization.DateFormat({pattern: 'dd/MM/yyyy HH:mm'});
+            formatter_long.format(source_data, 0);
+            console.log(formatter_long);*/
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            var dateFormatter = new google.visualization.DateFormat({pattern: 'dd/MM/yyyy'});
+            dateFormatter.format(data, 0);
+
+            chart.draw(data, options);
+            var header = document.getElementById("header_1");
+            header.innerHTML = "当前" + token_name + " 韭菜数 " + source[num-1][1];
+        }
+        function func_http_get(){
+            var searchParams = new URLSearchParams(window.location.search);
+            token_name = searchParams.get("token");
+            console.log(token_name);
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            } else { // code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function() {
+                if (this.readyState==4 && this.status==200) {
+                    draw(this.responseText);
+                }else if (this.readyState==3 && this.status==200){
+                    draw(this.responseText);
+                }
+            }
+            var url = "query_with_parameter.php?token="+ token_name;
+            console.log(url);
+            xmlhttp.open("GET",url,true);
+            xmlhttp.send();
+        }
+    </script>
 </head>
 <body>
+<h2 id="header_1" align="center"></h2>
+<div id="chart_div"></div>
 
 </body>
 </html>

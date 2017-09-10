@@ -2,6 +2,33 @@
 <html lang="en">
 <meta charset="utf-8">
 <head>
+    <style>
+        #customers  {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #customers td, #customers th {
+            border: 1px solid;
+            border-color : #dddddd;
+            padding: 8px;
+            text-align:  center;
+            border-bottom: 1px solid #ddd;
+        }
+
+       #customers tr:nth-child(even){background-color: #f9f9f9;}
+
+        #customers tr:hover {background-color: #ddd;}
+
+        #customers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+        }
+    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         google.charts.load('current', {packages: ['corechart']});
@@ -20,6 +47,7 @@
         }
         function create_table(source){
             var newTable = document.createElement('table');
+            newTable.id = "customers";
             var tableHeadingRow = document.createElement('tr');
             var tableHeader_0 = document.createElement('th');
             var tableHeader_1 = document.createElement('th');
@@ -28,9 +56,9 @@
             var tableHeader_4 = document.createElement('th');
             var header_0 = document.createTextNode('');
             var header_1 = document.createTextNode('Name');
-            var header_2 = document.createTextNode('address');
+            var header_2 = document.createTextNode('Number of addresses');
             var header_3 = document.createTextNode('Change');
-            var header_4 = document.createTextNode('address graph(1d)');
+            var header_4 = document.createTextNode('Address graph(1d)');
             tableHeader_0.appendChild(header_0);
             tableHeader_1.appendChild(header_1);
             tableHeader_2.appendChild(header_2);
@@ -47,18 +75,30 @@
                 var tableRow = document.createElement('tr');
                 var tableData_0 = document.createElement('img');
                 var tableData_1 = document.createElement('td');
+                tableData_1.width = "20%";
                 var tableData_2 = document.createElement('td');
+                tableData_1.width = "10%";
                 var tableData_3 = document.createElement('td');
+                tableData_1.width = "30%";
                 var tableData_4 = document.createElement('td');
+                tableData_1.width = "40%";
                 tableData_0.src = "/pic/" + source[i].name +".png";
                 tableData_0.alt = source[i].name;
+                tableData_0.align = "middle";
                 tableData_1.textContent = source[i].name;
                 tableData_2.textContent = source[i].address_num;
                 tableData_3.textContent = get_change(source[i].address_num, source[i].midnight_address);
+                if(parseInt(tableData_3.textContent) >= 0){
+                    tableData_3.style.color = "#00810a";
+                }else{
+                    tableData_3.style.color = "#ff0000";
+                }
                 tableData_4.id =  "img" +i;
                 tableData_4.alt =  source[i].name;
+                tableData_4.style.cursor=  "pointer";
                 tableData_4.onclick =  function() {
-                    alert(this.alt);
+                    window.open("token_address.html?token="+ this.alt,'_blank');
+                    //alert(this.alt);
                 }
                 tableRow.appendChild(tableData_0);
                 tableRow.appendChild(tableData_1);
@@ -90,8 +130,8 @@
 
             data.addRows(source_data);
             var options = {
-                width: 180,
-                height: 100,
+                width: 240,
+                height: 80,
                 legend: {position: 'none'}
                 /*
                 hAxis: {
