@@ -9,6 +9,8 @@
 class Token
 {
     public $table_name;
+    public $description;
+    public $homepage;
     public $url;
     public $address_num;
     public $name;
