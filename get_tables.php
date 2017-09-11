@@ -35,7 +35,7 @@ foreach($tokens as $token) {
     $conn = mysqli_connect($hn, $un, $pw, $db);
     if ($conn->connect_error)
         die($conn->connect_error);
-    $sql = "SELECT * from " . $token->table_name . " WHERE DATE(time_stamp) >= CURDATE()";
+    $sql = "SELECT * from " . $token->table_name . " WHERE DATE(time_stamp) >=(CURDATE() - INTERVAL 1 DAY)"; 
     //echo $sql . "<br>";
     $retval = mysqli_real_query($conn, $sql);
     if (!$retval) {

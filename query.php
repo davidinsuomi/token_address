@@ -28,4 +28,3 @@ echo json_encode($data);
 $conn->close();
 
 ?>
-
