@@ -29,21 +29,34 @@
             padding-bottom: 12px;
             text-align: center;
         }
+        #address_header:hover{
+            cursor:pointer;
+            text-decoration: underline;
+        }
+         #change_header:hover{
+            cursor:pointer;
+            text-decoration: underline;
+        }
     </style>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-86567150-2', 'auto');
-  ga('send', 'pageview');
-
-</script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        google.charts.load('current', {packages: ['corechart']});
-        google.charts.setOnLoadCallback(func_http_get);
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-86567150-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="sort.js"></script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            console.log("DOM fully loaded and parsed");
+            google.charts.load('current', {packages: ['corechart']});
+            google.charts.setOnLoadCallback(func_http_get);
+        });
         function get_change(current,midnight){
             var change;
             var value;
@@ -73,7 +86,16 @@
             var header_0 = document.createTextNode('');
             var header_1 = document.createTextNode('Name');
             var header_2 = document.createTextNode('Number of addresses');
+            tableHeader_2.id = "address_header";
+            tableHeader_2.onclick =  function() {
+                console.log("click header 2\n");
+                sortNumAddr();
+            }
             var header_3 = document.createTextNode('Change');
+            tableHeader_3.id = "change_header";
+            tableHeader_3.onclick =  function() {
+                sortChange();
+            }
             var header_4 = document.createTextNode('Address graph(1d)');
             tableHeader_0.appendChild(header_0);
             tableHeader_1.appendChild(header_1);
